@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa História ❤️</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --background-color: #121212;
+            --card-background: #1e1e1e;
+            --main-text-color: #f1f1f1;
+            --secondary-text-color: #b3b3b3;
+            --accent-color: #bb86fc;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            color: var(--main-text-color);
+        }
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        /* --- CABEÇALHO / INTRODUÇÃO --- */
+        .hero-section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: var(--background-color);
+        }
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin: 0;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .scroll-indicator {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            color: var(--secondary-text-color);
+        }
+        .scroll-indicator span {
+            display: block;
+            margin-top: 10px;
+            font-size: 2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* --- PLAYER DE MÚSICA NO HERO --- */
+        .hero-music-player {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .play-button {
+            background-color: var(--accent-color);
+            color: var(--background-color);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            padding: 0;
+        }
+        .play-button:hover {
+            background-color: #d1a6ff;
+        }
+        .play-text {
+            font-weight: 500;
+            color: var(--main-text-color);
+        }
+
+        /* --- CONTAINER DA LINHA DO TEMPO --- */
+        .timeline-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+        
+        .memory-card {
+            background-color: var(--card-background);
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            margin-bottom: 50px;
+            overflow: hidden;
+            cursor: pointer;
+            /* Animação de entrada */
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .memory-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .memory-card img {
+            width: 100%;
+            display: block;
+        }
+
+        .memory-card-content {
+            padding: 25px;
+        }
+
+        .memory-card-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0 0 10px 0;
+            color: var(--accent-color);
+        }
+
+        .memory-card-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--secondary-text-color);
+        }
+        
+        /* --- ESTILOS DO MODAL (HISTÓRIA) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90vh;
+            width: 600px;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2.5rem;
+            color: var(--secondary-text-color);
+            cursor: pointer;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: var(--main-text-color);
+        }
+        #modal-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            margin: 0 0 10px 0;
+        }
+        #modal-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--secondary-text-color);
+        }
+
+    </style>
+</head>
+<body>
+    <audio id="special-song" loop></audio>
+    
+    <section class="hero-section" id="hero">
+        <h1>A Nossa História</h1>
+        <p>Uma viagem pelas memórias que construímos juntos.</p>
+        <div class="hero-music-player">
+            <button id="hero-play-button" class="play-button">▶</button>
+            <span class="play-text">Aperte o play e viaje!</span>
+        </div>
+        <div class="scroll-indicator">
+            Role para baixo
+            <span>&darr;</span>
+        </div>
+    </section>
+
+    <main class="timeline-container" id="timeline">
+        <!-- As memórias serão inseridas aqui pelo JavaScript -->
+    </main>
+    
+    <!-- Estrutura do Modal (História) -->
+    <div class="modal-overlay" id="story-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close-button">&times;</span>
+            <img src="" alt="" id="modal-image">
+            <h2 id="modal-title"></h2>
+            <p id="modal-description"></p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        const mediaData = [
+            // ** Fase 1: Antes de Namorar (3 fotos) **
+            { id: 0, title: 'O Começo', description: 'Uma das primeiras fotos que tiramos juntos lembra? Aqui eu ja estava apaixonado, você ja estava tomando espaço no meu coração, lembro muito bem da sensação desse dia', source: '1.webp' },
+            { id: 1, title: 'Fases', description: 'Aqui a gente tinha se afastado um pouco, mas eu ainda te amava você me chamava de maninho kkk.', source: '2.webp' },
+            { id: 2, title: 'Fases', description: 'Ainda não tinha você mas eu sabia que no fundo um dia voce seria minha. Lembro de quanto escutei a voz de Deus pela primeira vez e e ele disse "Esta Confirmado" quando eu pedia você. Enfim anos se passaram e....', source: '3.webp' },
+            // ** Fase 2: Namorando (5 fotos) **
+            { id: 3, title: 'O "Sim"', description: 'O início do nosso namoro, o primeiro passo da vida que eu saberia que teria junto com você. Seu toque, seu beijo me deixavam cada vez mais apaixonado!.', source: '4.webp' },
+            { id: 4, title: 'Nossos momentos', description: 'Olha essa foto, a gente combina, não combina? Seus olhos são tão lindos, e você sabe que foi ele que me conquistou né?.', source: '5.webp' },
+            { id: 5, title: 'Momentos Magicos', description: 'O primeiro jantar romantico a gente nunca esquece kk, obrigado amor por esse jantar maravilhoso.', source: '6.webp' },
+            { id: 6, title: 'Seu aniversário', description: 'Esse foi o primeiro presente que eu te dei lembra, no primeiro aniversário que fui seu como "namorados" Lembro que fiquei bem nervoso com a presença do seu pai kkk', source: '7.webp' },
+            // ** Fase 3: Casados (4 fotos) **
+            { id: 8, title: 'O Grande Dia', description: 'Enfim noivos, saber que é com você que eu iria viver todos os dias, saber que iria deitar ao seu lado todas as noites, que iriamos construir uma familia juntos, só me faz ter um sentimento: EU TE AMO MUITO', source: '10.webp' },
+            { id: 9, title: 'Casados', description: 'O primeiro passo para uma vida linda juntos. O dia mais feliz da minha vida, casado com a mulher que sonhei qunado tinha 11 anos de idade, voce veio e mudou tudo em mim, trouxe uma alegria onde não existia mais, trouxe paz, trouxe com você amor e carinho. Não me arrependo um dia se quer em casar com você. Obrigado por casar comigo, por cuidar de mim!!.', source: '11.webp' },
+            { id: 10, title: 'A viagem', description: 'E chegou a nossa viagem dos sonhos, lembra? Da sensação do vento frio em nosso rosto, restaurantes aquecidos, chocolates quentes na maquina, a sensação da descida do avião. Tudo isso com você amor.', source: '12.webp' },
+            { id: 11, title: 'Neve', description: 'Lembro do dia em que acordamos cedinho para conhecer a neve lembra? Pegamos um ônibus e fomos la perto das montanhas, chegando la tomamos um chocolate quente, e fomos la pra cima de bondinho, que sensação mágica, lembro do sol refletindo na neve brilhando, que dia inesquecivel', source: '13.webp' },
+            // ** Fase 4: Filhas (4 fotos) **
+            { id: 12, title: 'A Descoberta da Diana', description: 'Nosso amor teve um fruto. Nossa Diana, e cumpriu a vontade de Deus, começou a construção da nossa familia. Lembro do quartinho dela montado, montamos o berço, colamos corações e arco iris em toda parede do berço. Lembra quando pegamos ela no colo na primeira vez?', source: '14.webp' },
+            { id: 13, title: 'Primeiros Passos', description: 'Ver nossa primeira filha crescer, ficando cada dia mais linda, todas as risadas com ela, cada passo com ela foi fazendo nos apaixonar ainda mais uma pelo outro mas não para por ai kkk', source: '17.webp' },
+            { id: 14, title: 'E a Família Cresceu', description: 'Descobrimos que seriamos pais de dois 1 mês antes da Diana completar 1 ano, mais uma nova historia sendo formada. Tivemos um susto mas fala sério... sentimos mais completo ainda. Preparar tudo de novo kk, mudar de casa, reduzir gastos, e nasceu nossa querida Anastacia.', source: '18.webp' },
+            { id: 15, title: 'Nossos Amores', description: 'O retrato da nossa felicidade completa. Obrigado amor por incriveis 6 anos ao seu lado, que nós possamos crescer cada vez mais em graça e sabedoria, que possamos ficar cada vez mais juntos, EU TE AMO MUITO', source: '20.webp' }
+        ];
+
+        const audioInfo = {
+            source: 'musica.mp3', // COLOQUE O NOME DO SEU ARQUIVO DE MÚSICA AQUI
+        };
+
+        const timelineContainer = document.getElementById('timeline');
+        const audioPlayer = document.getElementById('special-song');
+        const musicPlayerButton = document.getElementById('hero-play-button');
+        const playTextElement = document.querySelector('.play-text');
+        
+        // Elementos do Modal
+        const modal = document.getElementById('story-modal');
+        const modalCloseButton = document.getElementById('modal-close-button');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDescription = document.getElementById('modal-description');
+
+
+        // 1. Criar os cards na linha do tempo
+        mediaData.forEach(media => {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.innerHTML = `
+                <img src="${media.source}" alt="${media.title}" loading="lazy">
+                <div class="memory-card-content">
+                    <h2>${media.title}</h2>
+                    <p>${media.description.substring(0, 100)}...</p> 
+                </div>
+            `;
+            // Adiciona evento de clique para abrir o modal
+            card.addEventListener('click', () => openStoryModal(media));
+            timelineContainer.appendChild(card);
+        });
+
+        // 2. Animação de entrada com Intersection Observer
+        const memoryCards = document.querySelectorAll('.memory-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        memoryCards.forEach(card => observer.observe(card));
+        
+        // 3. Lógica do player de música
+        audioPlayer.src = audioInfo.source;
+        musicPlayerButton.addEventListener('click', () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                musicPlayerButton.textContent = '❚❚';
+                playTextElement.textContent = 'A música está tocando...';
+            } else {
+                audioPlayer.pause();
+                musicPlayerButton.textContent = '▶';
+                playTextElement.textContent = 'Aperte o play e viaje!';
+            }
+        });
+
+        // 4. Funções e lógica do Modal
+        function openStoryModal(media) {
+            modalImage.src = media.source;
+            modalImage.alt = media.title;
+            modalTitle.textContent = media.title;
+            modalDescription.textContent = media.description; // Usa a descrição completa
+            modal.classList.add('visible');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeStoryModal() {
+            modal.classList.remove('visible');
+            document.body.classList.remove('modal-open');
+        }
+        
+        modalCloseButton.addEventListener('click', closeStoryModal);
+        // Fecha o modal se clicar no fundo escuro
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeStoryModal();
+            }
+        });
+
+    });
+    </script>
+</body>
+</html>
